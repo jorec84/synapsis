@@ -1,0 +1,41 @@
+service: saas-whatsapp
+frameworkVersion: '3'
+
+provider:
+  name: aws
+  runtime: nodejs18.x
+  region: ${env:REGION}
+  stage: ${env:STAGE}
+  environment:
+    SQS_QUEUE_URL: https://sqs.${env:REGION}.amazonaws.com/${aws:accountId}/${env:SQS_QUEUE_NAME}
+    DELIVERY_DELAY_SECONDS: ${env:DELIVERY_DELAY_SECONDS}
+
+functions:
+  api:
+    handler: dist/src/api/api.controller.handler
+    events:
+      - httpApi:
+          path: /send-message
+          method: post
+
+  consumer:
+    handler: dist/src/queue/consumer.handler.handle
+    events:
+      - sqs:
+          arn:
+            Fn::GetAtt: [MessageQueue, Arn]
+
+  delivery:
+    handler: dist/src/delivery/delivery.handler.handle
+    events:
+      - eventBridge:
+          pattern:
+            source: ['saas.whatsapp']
+            detail-type: ['DeliveryDelay']
+
+resources:
+  Resources:
+    MessageQueue:
+      Type: AWS::SQS::Queue
+      Properties:
+        QueueName: ${env:SQS_QUEUE_NAME}

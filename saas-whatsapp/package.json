@@ -1,0 +1,24 @@
+{
+  "name": "saas-whatsapp",
+  "version": "1.0.0",
+  "scripts": {
+    "start": "nest start",
+    "deploy": "serverless deploy",
+    "migrate": "typeorm migration:run"
+  },
+  "dependencies": {
+    "@nestjs/common": "^10.0.0",
+    "@nestjs/core": "^10.0.0",
+    "@nestjs/platform-express": "^10.0.0",
+    "class-transformer": "^0.5.1",
+    "class-validator": "^0.14.0",
+    "@aws-sdk/client-sqs": "^3.500.0",
+    "typeorm": "^0.3.17",
+    "mysql2": "^3.6.0"
+  },
+  "devDependencies": {
+    "serverless": "^3.38.0",
+    "typescript": "^5.3.3",
+    "ts-node": "^10.9.1"
+  }
+}
